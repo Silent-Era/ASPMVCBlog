@@ -6,6 +6,10 @@ namespace ASPMVCBlog.Models
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
+        [Display(Name ="Username")]
+        public string UserName { get; set; }
+
+        [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
@@ -49,9 +53,9 @@ namespace ASPMVCBlog.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "Username")]
+       
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -65,12 +69,20 @@ namespace ASPMVCBlog.Models
     public class RegisterViewModel
     {
         [Required]
+        [StringLength(20,ErrorMessage ="Your username can't be longer than 20 symbols.")]
+        [Display(Name ="Username")]
+        public string UserName { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Display(Name = "Full name")]
+        public string FullName{ get; set; }
+
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
@@ -89,7 +101,7 @@ namespace ASPMVCBlog.Models
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
