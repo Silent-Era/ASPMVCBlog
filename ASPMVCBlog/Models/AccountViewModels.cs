@@ -54,7 +54,6 @@ namespace ASPMVCBlog.Models
     {
         [Required]
         [Display(Name = "Username")]
-       
         public string UserName { get; set; }
 
         [Required]
