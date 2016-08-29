@@ -17,7 +17,9 @@ namespace ASPMVCBlog.Controllers
         // GET: Posts
         public ActionResult Index()
         {
-            return View(db.Posts.ToList());
+            var posts = db.Posts.Where(p => p.IsDeleted == false)
+               .Include(p => p.Author).OrderByDescending(p => p.PostDate).ToList();
+            return View(posts);
         }
 
         // GET: Posts/Details/5
@@ -28,6 +30,8 @@ namespace ASPMVCBlog.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Post post = db.Posts.Find(id);
+            if (post.IsDeleted)
+                post = null;
             if (post == null)
             {
                 return HttpNotFound();
@@ -46,15 +50,15 @@ namespace ASPMVCBlog.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PostId,PostTitle,PostBody,PostDate,IsDeleted")] Post post)
+        public ActionResult Create([Bind(Include = "PostId,PostTitle,PostBody,PostDate")] Post post)
         {
+             post.Author = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
             if (ModelState.IsValid)
             {
                 db.Posts.Add(post);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
             return View(post);
         }
 
@@ -97,6 +101,8 @@ namespace ASPMVCBlog.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Post post = db.Posts.Find(id);
+            if (post.IsDeleted)
+                post = null;
             if (post == null)
             {
                 return HttpNotFound();
@@ -110,7 +116,8 @@ namespace ASPMVCBlog.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Post post = db.Posts.Find(id);
-            db.Posts.Remove(post);
+            post.IsDeleted = true;
+            //db.Posts.Remove(post);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

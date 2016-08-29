@@ -23,7 +23,6 @@ namespace ASPMVCBlog.Models
         [Required]
         public string PostBody { get; set; }
 
-        [Required]
         public ApplicationUser Author{ get; set; }
 
         [Required]
