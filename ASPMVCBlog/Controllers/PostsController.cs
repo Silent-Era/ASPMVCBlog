@@ -38,8 +38,22 @@ namespace ASPMVCBlog.Controllers
             }
             return View(post);
         }
-
+        public ActionResult ViewPost(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Post post = db.Posts.Include(p=>p.Author).Include(p=>p.Comments)
+                .FirstOrDefault(p=>p.PostId==id);
+            if (post == null || post.IsDeleted)
+            {
+                return HttpNotFound();
+            }
+            return View(post);
+        }
         // GET: Posts/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -48,7 +62,9 @@ namespace ASPMVCBlog.Controllers
         // POST: Posts/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
+        [ValidateInput(false)]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "PostId,PostTitle,PostBody,PostDate")] Post post)
         {
@@ -81,6 +97,7 @@ namespace ASPMVCBlog.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [ValidateInput(false)]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "PostId,PostTitle,PostBody,PostDate,IsDeleted")] Post post)
         {

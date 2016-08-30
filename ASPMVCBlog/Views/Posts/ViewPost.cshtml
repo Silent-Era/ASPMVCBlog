@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "ViewPost";
+}
+@using ASPMVCBlog.Models
+@model Post
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>@Model.PostTitle</h2>
+        <div>
+            Published by
+            @if (Model.Author.FullName != null)
+            {
+                <i>@Model.Author.FullName (@Model.Author.UserName)</i>
+            }
+            else
+            {
+                <i>@Model.Author.UserName</i>
+            }
+            on <i>@String.Format("{0:dd-MM-yyyy}", Model.PostDate)</i>
+        </div>
+        <p>
+            @Html.Raw(Model.PostBody)
+        </p>
+    </div>
+</div>
+<div>
+    @if (Model.Comments.Any())
+    {
+        foreach(Comment comment in Model.Comments)
+        {
+            <div>
+                @comment.CommentBody
+            </div>
+            <strong>Posted by <i>@comment.Author.UserName</i> 
+             on <i>@String.Format("{0:dd-MM-yyyy}",@comment.CommentDate)</i>
+             at <i>@String.Format("{0:HH:mm}", @comment.CommentDate)</i></strong>
+        }
+    }
+</div>
+

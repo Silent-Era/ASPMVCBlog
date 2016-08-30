@@ -9,24 +9,25 @@
     {
         foreach (var post in Model)
         {
-        <div class="col-md-8">
-            <h2>@post.PostTitle</h2>
-            <div>
-                Published by
-                @if(post.Author.FullName != null)
-                {
-                    <i>@post.Author.FullName (@post.Author.UserName)</i>
-                }
-                else
-                {
-                    <i>@post.Author.UserName</i>
-                }
-                on <i>@String.Format("{0:dd-MM-yyyy}", post.PostDate)</i>
-            </div>
-            <p>
-                @Html.Raw(post.PostBody)
-            </p>
-        </div>
+                <div onclick="location.href='@Url.Action("ViewPost", "Posts", new { id = post.PostId }, null)'"
+                      class="viewPost col-md-8">
+                    <h2>@post.PostTitle</h2>
+                    <div>
+                        Published by
+                        @if (post.Author.FullName != null)
+                        {
+                            <i>@post.Author.FullName (@post.Author.UserName)</i>
+                        }
+                        else
+                        {
+                            <i>@post.Author.UserName</i>
+                        }
+                        on <i>@String.Format("{0:dd-MM-yyyy}", post.PostDate)</i>
+                    </div>
+                    <p>
+                        @Html.Raw(post.PostBody)
+                    </p>
+                </div>
         }
     }
     else

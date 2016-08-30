@@ -12,6 +12,7 @@ namespace ASPMVCBlog.Models
         {
             this.IsDeleted = false;
             this.PostDate = DateTime.Now;
+            this.Comments = new HashSet<Comment>();
         }
         [Key]
         public int PostId { get; set; }
@@ -27,6 +28,8 @@ namespace ASPMVCBlog.Models
 
         [Required]
         public DateTime PostDate { get; set; }
+
+        public ICollection<Comment> Comments{ get; set; }
 
         public bool IsDeleted { get; set; }
 

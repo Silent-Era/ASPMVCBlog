@@ -1,51 +1,55 @@
-﻿@model IEnumerable<ASPMVCBlog.Models.Post>
+﻿@using ASPMVCBlog.Models
+@model List<Post>
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2 style="text-align:center">All posts in my blog</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.PostTitle)
+           Title:
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PostBody)
+            Author:
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PostDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDeleted)
+           Published on:
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
+@foreach (var post in Model) {
+    <tr onclick="location.href='@Url.Action("ViewPost", "Posts", new { id = post.PostId }, null)'"
+        class="viewPost">
         <td>
-            @Html.DisplayFor(modelItem => item.PostTitle)
+            @post.PostTitle
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.PostBody)
+            @if (post.Author.FullName != null)
+            {
+                <i>@post.Author.FullName (@post.Author.UserName)</i>
+            }
+            else
+            {
+                <i>@post.Author.UserName</i>
+            }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.PostDate)
+            @String.Format("{0:dd-MM-yyyy}",post.PostDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsDeleted)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.PostId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PostId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PostId })
+            @Html.ActionLink("Edit", "Edit", new { id=post.PostId }) |
+            @*@Html.ActionLink("View post", "ViewPost", new { id=post.PostId }) |*@
+            @Html.ActionLink("Delete", "Delete", new { id=post.PostId })
         </td>
     </tr>
 }
 
 </table>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
