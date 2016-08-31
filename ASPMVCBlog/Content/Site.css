@@ -40,3 +40,26 @@ tr:hover {
     margin:-3px;
     margin-left:-1px;
 }
+.viewComment{
+    border-color:cyan;
+    border-width:3px;
+    border-style:outset;
+    padding-top:15px;
+    width:40%;
+    border-radius:10px;
+}
+textarea{
+    width:200%;
+    border:1px solid black;
+    height:300px;
+}
+dd,dt{
+    padding:10px;
+}
+dd{
+     border:1px solid;
+     word-wrap:break-word;
+     width:40%;
+     text-align:center;
+     border-radius:10px;
+}

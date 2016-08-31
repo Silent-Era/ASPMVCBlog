@@ -42,14 +42,16 @@
             @String.Format("{0:dd-MM-yyyy}",post.PostDate)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=post.PostId }) |
-            @*@Html.ActionLink("View post", "ViewPost", new { id=post.PostId }) |*@
-            @Html.ActionLink("Delete", "Delete", new { id=post.PostId })
+            @if (User.IsInRole("Administrators") || post.Author.UserName==User.Identity.Name)
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = post.PostId }) @:|
+                @Html.ActionLink("Delete", "Delete", new { id = post.PostId })
+            }
         </td>
     </tr>
 }
 
 </table>
-<p>
-    @Html.ActionLink("Create New", "Create")
+<p style="text-align:right">
+    @Html.ActionLink("Create New Post", "Create")
 </p>

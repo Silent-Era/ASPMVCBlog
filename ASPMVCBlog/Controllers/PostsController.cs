@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ASPMVCBlog.Models;
+using Microsoft.AspNet.Identity;
 
 namespace ASPMVCBlog.Controllers
 {
@@ -22,34 +23,42 @@ namespace ASPMVCBlog.Controllers
             return View(posts);
         }
 
-        // GET: Posts/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Post post = db.Posts.Find(id);
-            if (post.IsDeleted)
-                post = null;
-            if (post == null)
-            {
-                return HttpNotFound();
-            }
-            return View(post);
-        }
+        //// GET: Posts/Details/5
+        //public ActionResult Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    Post post = db.Posts.Find(id);
+        //    if (post.IsDeleted)
+        //        post = null;
+        //    if (post == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(post);
+        //}
+        //public ActionResult RedirectFromComments(Mediator med)
+        //{
+        //    return RedirectToAction("ViewPost", med.PostId);
+        //}
         public ActionResult ViewPost(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Include(p=>p.Author).Include(p=>p.Comments)
-                .FirstOrDefault(p=>p.PostId==id);
-            if (post == null || post.IsDeleted)
+            //Post post = db.Posts.Include(p=>p.Author).Include(p=>p.Comments)
+            //    .FirstOrDefault(p=>p.PostId==id);
+           var post = db.Posts.Where(p => p.IsDeleted == false).Include(p=>p.Author)
+                .FirstOrDefault(p => p.PostId == id);
+            var comments = db.Comments.Where(c => c.post.PostId == id && c.IsDeleted==false).Include(c => c.Author).ToList();
+            if (post == null)
             {
                 return HttpNotFound();
             }
+            post.Comments = comments;
             return View(post);
         }
         // GET: Posts/Create
@@ -81,14 +90,25 @@ namespace ASPMVCBlog.Controllers
         // GET: Posts/Edit/5
         public ActionResult Edit(int? id)
         {
+            
+            var UserId = User.Identity.GetUserId();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.Where(p=>p.IsDeleted!=true)
+                .Include(p=>p.Author).FirstOrDefault(p=>p.PostId==(int)id);
+
             if (post == null)
             {
                 return HttpNotFound();
+            }
+            if (!User.IsInRole("Administrators"))
+            {
+                if (post.Author.Id != UserId)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
             }
             return View(post);
         }
@@ -111,18 +131,26 @@ namespace ASPMVCBlog.Controllers
         }
 
         // GET: Posts/Delete/5
+        
         public ActionResult Delete(int? id)
         {
+            var UserId = User.Identity.GetUserId();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
-            if (post.IsDeleted)
-                post = null;
+            Post post = db.Posts.Where(p=>p.IsDeleted != true)
+                .Include(p => p.Author).FirstOrDefault(p => p.PostId == (int)id);
             if (post == null)
             {
                 return HttpNotFound();
+            }
+            if (!User.IsInRole("Administrators"))
+            {
+                if (post.Author.Id != UserId)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
             }
             return View(post);
         }

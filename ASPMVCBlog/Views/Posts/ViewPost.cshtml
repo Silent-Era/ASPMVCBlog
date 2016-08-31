@@ -25,18 +25,48 @@
         </p>
     </div>
 </div>
+@if (User.Identity.Name == Model.Author.UserName || User.IsInRole("Administrators"))
+{
+    <div style="text-align:right">
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PostId }) 
+    @Html.ActionLink("Delete", "Delete", new { id = Model.PostId })
+    </div>
+}
+<hr style="background-color:black;height:2px" />
 <div>
     @if (Model.Comments.Any())
     {
-        foreach(Comment comment in Model.Comments)
+        <h4 style="padding-top:2%">Comments:</h4>
+        foreach (Comment comment in Model.Comments)
         {
-            <div>
-                @comment.CommentBody
+            <div class="viewComment">
+                <div style="padding-left:2%" >
+                    <i>@comment.CommentBody</i>
+                </div>
+                <div style="text-align:right;font-size:12px">
+                    Posted by 
+                    @if (comment.Author != null)
+                    {
+                        <a href=""><i>@comment.Author.UserName</i></a>
+                    }
+                    else
+                    {
+                        <strong><i>@comment.AuthorStr</i></strong>
+                    }
+                    on <strong><i>@String.Format("{0:dd-MM-yyyy}", @comment.CommentDate)</i></strong>
+                    at <strong><i>@String.Format("{0:HH:mm}", @comment.CommentDate)</i></strong>
+                </div>
             </div>
-            <strong>Posted by <i>@comment.Author.UserName</i> 
-             on <i>@String.Format("{0:dd-MM-yyyy}",@comment.CommentDate)</i>
-             at <i>@String.Format("{0:HH:mm}", @comment.CommentDate)</i></strong>
         }
     }
+    else
+    {
+        <h3 style="text-align:center;padding-top:2%">No comments yet.</h3>
+    }
+    <div id="Display">
+
+    </div>
+    @Ajax.ActionLink("Leave a comment?", "CreateComment", "Comments",new {PostId= Model.PostId },
+    new AjaxOptions() { UpdateTargetId = "Display" })
 </div>
 

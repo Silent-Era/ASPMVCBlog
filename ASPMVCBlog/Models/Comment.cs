@@ -12,10 +12,15 @@ namespace ASPMVCBlog.Models
         {
             this.CommentDate = DateTime.Now;
             this.IsDeleted = false;
+            this.AuthorStr = "Anonymous";
         }
         [Key]
         public int CommentId { get; set; }
 
+       
+        public int PostId { get; set; }
+
+        public string AuthorId { get; set; }
         [Required]
         public string CommentBody { get; set; }
 
@@ -23,7 +28,11 @@ namespace ASPMVCBlog.Models
         public DateTime CommentDate { get; set; }
 
         public ApplicationUser Author { get; set; }
-        [Required]
+
+        [StringLength(20,ErrorMessage ="Name too long. Sorry :(")]
+        public string AuthorStr { get; set; }
+
+       
         public Post post { get; set; }
 
         public bool IsDeleted { get; set; }
