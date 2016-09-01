@@ -75,16 +75,20 @@ namespace ASPMVCBlog.Controllers
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
             }
-            return PartialView("EditComment", new Comment() { CommentId = id
-                                ,CommentBody=comment.CommentBody});
+            return PartialView("EditComment", new  Comment(){ CommentId = id
+                                ,CommentBody=comment.CommentBody,PostId=PostId});
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditComment([Bind(Include = "CommentBody,CommentId")] Comment comment)
+        public ActionResult EditComment([Bind(Include = "CommentId,CommentBody,PostId")] Comment comment)
         {
+            //var comment = new Comment();
+            //comment.CommentId = med.CommentId;
+            //comment.PostId = med.PostId;
+            //comment.CommentBody = med.CommentBody;
             if (ModelState.IsValid)
             {
-                var com= db.Comments.Find(comment.CommentId);
+                var com= db.Comments.Find(Mediator.CommentId);
                 com.CommentBody = comment.CommentBody;
                 db.SaveChanges();
                 return RedirectToAction("ViewPost","Posts",new { id=comment.PostId});

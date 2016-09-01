@@ -47,6 +47,7 @@
                     <i>@comment.CommentBody</i>
                    
                 </div>
+             
                 @if (comment.Author != null)
                 {
                     if (User.IsInRole("Administrators") || User.Identity.Name == comment.Author.UserName)
