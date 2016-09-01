@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using ASPMVCBlog.Models;
 using Microsoft.AspNet.Identity;
+using System.Net;
+using System.Data.Entity;
 
 namespace ASPMVCBlog.Controllers
 {
@@ -37,6 +39,55 @@ namespace ASPMVCBlog.Controllers
                 db.Comments.Add(comment);
                 db.SaveChanges();
                 return RedirectToAction("ViewPost","Posts", new { id = id });
+            }
+            return View();
+        }
+        public ActionResult DeleteComment(int id,int PostId)
+        {
+            
+            Comment comment = db.Comments.Find(id);
+            if (comment.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (!User.IsInRole("Administrators"))
+            {
+                if (User.Identity.GetUserId() != comment.AuthorId)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+            comment.IsDeleted = true;
+            db.SaveChanges();
+            return RedirectToAction("ViewPost","Posts", new { id = PostId });
+        }
+        public ActionResult EditComment(int id,int PostId)
+        {
+            Comment comment = db.Comments.Find(id);
+            if (comment.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if(!User.IsInRole("Administrators"))
+            {
+                if (User.Identity.GetUserId() != comment.AuthorId)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+            return PartialView("EditComment", new Comment() { CommentId = id
+                                ,CommentBody=comment.CommentBody});
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditComment([Bind(Include = "CommentBody,CommentId")] Comment comment)
+        {
+            if (ModelState.IsValid)
+            {
+                var com= db.Comments.Find(comment.CommentId);
+                com.CommentBody = comment.CommentBody;
+                db.SaveChanges();
+                return RedirectToAction("ViewPost","Posts",new { id=comment.PostId});
             }
             return View();
         }

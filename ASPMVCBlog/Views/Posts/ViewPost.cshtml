@@ -3,6 +3,7 @@
     ViewBag.Title = "ViewPost";
 }
 @using ASPMVCBlog.Models
+@using Microsoft.AspNet.Identity;
 @model Post
 
 <div class="row">
@@ -39,10 +40,25 @@
         <h4 style="padding-top:2%">Comments:</h4>
         foreach (Comment comment in Model.Comments)
         {
+            
             <div class="viewComment">
+               
                 <div style="padding-left:2%" >
                     <i>@comment.CommentBody</i>
+                   
                 </div>
+                @if (comment.Author != null)
+                {
+                    if (User.IsInRole("Administrators") || User.Identity.Name == comment.Author.UserName)
+                    {
+                        <div style="text-align:left;font-size:12px;margin-bottom:-15px;padding-left:2%">
+                            @Html.ActionLink("Delete", "DeleteComment", "Comments", new { id = comment.CommentId, PostId = Model.PostId }, null)<i>    </i>
+                            @Ajax.ActionLink("Edit","EditComment","Comments",new { id=comment.CommentId,PostId=Model.PostId},
+                           new AjaxOptions() { UpdateTargetId = "Display" })
+                        </div>
+                    }
+                }
+                
                 <div style="text-align:right;font-size:12px">
                     Posted by 
                     @if (comment.Author != null)

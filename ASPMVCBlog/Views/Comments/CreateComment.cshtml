@@ -14,14 +14,8 @@
             </div>
         </div>
         }
-        @*else
-        {
-            //Model.AuthorId = User.Identity.GetUserId();
-           
-        }*@
-        
             <div class="form-group" >
-                @Html.LabelFor(model => model.AuthorStr, "Your comment:", htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.CommentBody, "Your comment:", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div>
                     @Html.EditorFor(model => model.CommentBody, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.CommentBody, "",new { @class = "text-danger" })
